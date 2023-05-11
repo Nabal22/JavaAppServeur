@@ -17,5 +17,15 @@
         <jarDirectory url="file://$USER_HOME$/Downloads/mysql-connector.jar" recursive="false" />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="encodage" level="project" />
+    <orderEntry type="module-library" exported="">
+      <library>
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/bserveur.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
   </component>
 </module>
