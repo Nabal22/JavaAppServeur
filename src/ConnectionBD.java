@@ -1,6 +1,6 @@
 import java.sql.*;
 
-public class Main {
+public class ConnectionBD {
     public static void main(String[] args) throws ClassNotFoundException {
         Class.forName("com.mysql.jdbc.Driver");
 
@@ -15,7 +15,6 @@ public class Main {
         } catch (Exception e) {
             System.out.println("Connexion échouée !");
         }
-
 
     }
 }
