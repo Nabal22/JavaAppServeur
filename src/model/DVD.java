@@ -67,7 +67,7 @@ public class DVD implements Document{
     };
 
     public String toString() {
-        return this.titre + this.etat;
+        return this.titre + " " + "(" + this.etat + ")";
     }
 
     public Abonne getAbonne() {

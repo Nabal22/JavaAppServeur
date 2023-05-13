@@ -1,3 +1,4 @@
+import BD.ConnectionBD;
 import model.Abonne;
 import model.Document;
 import serveur.ServeurBTTP;
@@ -15,7 +16,8 @@ public class Appli {
         ArrayList<Document> dvds = dbConnect.getDvdsFROMDB(abonnes);
 
 
-
+        ServiceReservation.setAbonnes(abonnes);
+        ServiceReservation.setDvds(dvds);
 
         new Thread(new ServeurBTTP(ServiceReservation.class, 1001)).start();
     }

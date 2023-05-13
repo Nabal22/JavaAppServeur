@@ -1,3 +1,5 @@
+import encodage.Decode;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -23,16 +25,29 @@ public class Client {
 
             // Boucle pour permettre à l'utilisateur d'envoyer plusieurs messages
             while (true) {
-                // Lire l'entrée utilisateur
-                System.out.println("Entrez votre message : ");
-                String message = scanner.nextLine();
+                // Lire la réponse du serveur => choisir numéro abonne
+                String reponse = in.readLine();
+                System.out.println("Réponse du serveur : " + Decode.decoder(reponse));
 
-                // Envoyer le message au serveur
+                //envoyer au serveur => numéro abonne
+                System.out.println("Entrez votre message : ");
+                String message = scanner.next();
                 out.println(message);
 
-                // Lire la réponse du serveur
-                String reponse = in.readLine();
-                System.out.println("Réponse du serveur : " + reponse);
+                // Lire la réponse du serveur => liste des DVDs
+                reponse = in.readLine();
+                System.out.println("Réponse du serveur : " + Decode.decoder(reponse));
+
+                //envoyer au serveur => numéro du DVD
+                System.out.println("Entrez votre message : ");
+                message = scanner.next();
+                out.println(message);
+
+                // Lire la réponse du serveur => réservation effectuée
+                reponse = in.readLine();
+                System.out.println("Réponse du serveur : " + Decode.decoder(reponse));
+
+
 
                 // Si l'utilisateur entre "exit", sortir de la boucle
                 if (message.equals("exit")) {
