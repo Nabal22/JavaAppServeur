@@ -5,6 +5,12 @@ public class Abonne {
     String nom;
     String dateNaissance;
 
+    public Abonne(int numero, String nom, String dateNaissance) {
+        this.numeroAdhérent = numero;
+        this.nom = nom;
+        this.dateNaissance = dateNaissance;
+    }
+
     public int getNumeroAdhérent() {
         return numeroAdhérent;
     }

@@ -16,15 +16,15 @@ public class ServiceReservation extends Service {
     ArrayList<Abonne> abonnes;
     ArrayList<Document> dvds;
 
-    public ServiceReservation(Socket s) {
+    public ServiceReservation(Socket s, ArrayList<Abonne> abonnes, ArrayList<Document> dvds) {
         super(s);
     }
 
-    private void setAbonnes(ArrayList<Abonne> abonnes) {
-        this.abonnes = abonnes;
+    public void setAbonnes(ArrayList<Abonne> abonnes) {
+        //this.abonnes = abonnes;
     }
-    private void setDvds(ArrayList<Document> dvds) {
-        this.dvds = dvds;
+    public void setDvds(ArrayList<Document> dvds) {
+        //this.dvds = dvds;
     }
 
     @Override
@@ -36,6 +36,7 @@ public class ServiceReservation extends Service {
             sOut.println("Veuillez saisir votre numéro d'abonné.");
             int numAbo = sIn.read();
             sOut.println("Veuillez saisir le numéro d'un livre à réserver.");
+            sOut.println("test");
             sOut.println(Encode.encoder(this.listeDesDvdsDisponibles()));
             int numDvdChoisi = sIn.read();
 
@@ -51,7 +52,7 @@ public class ServiceReservation extends Service {
     private String listeDesDvdsDisponibles() {
         StringBuilder s = new StringBuilder();
         for (int i = 0; i < this.dvds.size(); i++) {
-            if(this.dvds.get(i).empruntePar() == null)
+            if(this.dvds.get(i).empruntePar() == null && this.dvds.get(i).reservePar() == null)
             s.append(this.dvds.get(i).numero() + "-" + this.dvds.get(i).toString());
         }
         return s.toString();
