@@ -8,28 +8,41 @@ public class DVD implements Document{
 
     String etat; //reservé ou emprunté ou libre
 
+    public DVD(int numero, String titre, boolean estPourAdulte, Abonne abonne, String etat) {
+        this.numero = numero;
+        this.titre = titre;
+        this.estPourAdulte = estPourAdulte;
+        this.abonne = abonne;
+        this.etat = etat;
+    }
+
     public int numero() {
         return this.numero;
     }
+
     // return null si pas emprunté ou pas réservé
     public Abonne empruntePar(){
-        if(this.etat != "emprunté" || this.etat != "réservé") {
-            return null;
-        }
-        else {
+        if(this.etat.equals("emprunté")) {
             return this.abonne;
         }
-    } ; // Abonné qui a emprunté ce document
+        else {
+            return null;  // Abonné qui a emprunté ce document
+        }
+    }
 
 
     public Abonne reservePar() {
-        return this.abonne;
+        if (this.etat.equals("réservé")) {
+            return this.abonne;
+        } else {
+            return null;
+        }
     } ; // Abonné qui a réservé ce document
 
 
     // precondition ni réservé ni emprunté
     public void reservation(Abonne ab){
-        if (this.etat == "libre") {
+        if (this.etat.equals("libre")) {
             this.etat = "emprunté";
             this.abonne = ab;
         }
@@ -38,9 +51,9 @@ public class DVD implements Document{
 
     // precondition libre ou réservé par l’abonné qui vient emprunter
     public void emprunt(Abonne ab) {
-        if (this.etat == "réservé" && this.abonne == ab) {
+        if (this.etat.equals("réserve") && this.abonne == ab) {
             this.etat = "emprunté";
-        } else if (this.abonne == null && this.etat == "libre") {
+        } else if (this.abonne == null && this.etat.equals("libre")) {
             this.etat = "emprunté";
             this.abonne = ab;
         }
@@ -54,7 +67,11 @@ public class DVD implements Document{
     };
 
     public String toString() {
-        return this.titre;
+        return this.titre + " " + "(" + this.etat + ")";
+    }
+
+    public Abonne getAbonne() {
+        return this.abonne;
     }
 
 

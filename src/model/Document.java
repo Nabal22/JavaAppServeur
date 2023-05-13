@@ -11,4 +11,6 @@ public interface Document {
     void emprunt(Abonne ab);
     // retour d’un document ou annulation d‘une réservation
     void retour();
+
+    Abonne getAbonne();
 }
