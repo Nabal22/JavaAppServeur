@@ -52,7 +52,7 @@ public class ConnectionBD {
 
         while(rs.next()) {
             Integer numAb = rs.getInt(5);
-            if(numAb == null) {
+            if(numAb == 0) {    //renvoit 0 quand c'est null en BD
                 numAb = rs.getInt(6);
             }
 
