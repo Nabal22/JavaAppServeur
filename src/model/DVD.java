@@ -1,5 +1,7 @@
 package model;
 
+import exceptions.documentNonLibreException;
+
 public class DVD implements Document{
     int numero;
     String titre;
@@ -41,10 +43,12 @@ public class DVD implements Document{
 
 
     // precondition ni réservé ni emprunté
-    public void reservation(Abonne ab){
-        if (this.etat.equals("libre")) {
+    public void reservation(Abonne ab) throws documentNonLibreException {
+        if (this.etat.equals("libre") || (this.etat.equals("réservé") && this.abonne == ab)) {
             this.etat = "emprunté";
             this.abonne = ab;
+        } else {
+            throw new documentNonLibreException();
         }
     }
 

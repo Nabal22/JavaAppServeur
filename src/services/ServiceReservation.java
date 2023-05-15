@@ -2,6 +2,9 @@ package services;
 import BD.ConnectionBD;
 import bserveur.Service;
 import encodage.Encode;
+import exceptions.abonneNonTrouveException;
+import exceptions.documentNonLibreException;
+import exceptions.documentNonTrouveException;
 import model.Abonne;
 import model.Document;
 
@@ -45,8 +48,18 @@ public class ServiceReservation extends Service {
             sOut.println(Encode.encoder("Veuillez saisir le numéro d'un livre à réserver. \n" + this.listeDesDvdsDisponibles()));
             int numDvdChoisi = Integer.parseInt(sIn.readLine());
 
-            réserverDvd(numAbo, numDvdChoisi);
-            sOut.println("Réservation effectuée.");
+            try {
+                réserverDvd(numAbo, numDvdChoisi);
+                sOut.println("Réservation effectuée.");
+            } catch (documentNonTrouveException e) {
+                sOut.println("Ce document n'éxiste pas.");
+            } catch (abonneNonTrouveException e) {
+                sOut.println("Votre numéro d'abonné n'est pas enregistré.");
+            } catch (documentNonLibreException e ) {
+                sOut.println("Ce document n'est pas libre.");
+            }
+
+
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -66,28 +79,28 @@ public class ServiceReservation extends Service {
         return s.toString();
     }
 
-    private void réserverDvd(int numAbo, int numDvd) throws SQLException {
-        Abonne ab = this.getAbonne(numAbo);
-        Document d = this.getDvd(numDvd);
-        d.reservation(ab);
-        this.dbConnect.reserverDvdBD(ab, d);
+    private void réserverDvd(int numAbo, int numDvd) throws SQLException, abonneNonTrouveException, documentNonTrouveException, documentNonLibreException {
+            Abonne ab = this.getAbonne(numAbo);
+            Document d = this.getDvd(numDvd);
+            d.reservation(ab);
+            this.dbConnect.reserverDvdBD(ab, d);
     }
 
     //retourne l'abonne qui a le numéro
-    private Abonne getAbonne(int numAbo) {
+    private Abonne getAbonne(int numAbo) throws abonneNonTrouveException {
         for (int i = 0; i < this.abonnes.size(); i++) {
             if(this.abonnes.get(i).getNumeroAdhérent() == numAbo) {
                 return this.abonnes.get(i);
             }
         }
-        return null;
+        throw new abonneNonTrouveException();
     }
-    private Document getDvd(int numDvd) {
+    private Document getDvd(int numDvd) throws documentNonTrouveException {
         for (int i = 0; i < this.dvds.size(); i++) {
             if(this.dvds.get(i).numero() == numDvd) {
                 return this.dvds.get(i);
             }
         }
-        return null;
+        throw new documentNonTrouveException();
     }
 }
