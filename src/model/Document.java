@@ -1,5 +1,6 @@
 package model;
 
+import exceptions.documentNonEmpruntéException;
 import exceptions.documentNonLibreException;
 
 public interface Document {
@@ -10,9 +11,9 @@ public interface Document {
     // precondition ni réservé ni emprunté
     void reservation(Abonne ab) throws documentNonLibreException;
     // precondition libre ou réservé par l’abonné qui vient emprunter
-    void emprunt(Abonne ab);
+    void emprunt(Abonne ab) throws documentNonLibreException;
     // retour d’un document ou annulation d‘une réservation
-    void retour();
+    void retour() throws documentNonEmpruntéException;
 
     Abonne getAbonne();
 }

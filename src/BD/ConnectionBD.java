@@ -88,4 +88,28 @@ public class ConnectionBD {
 
 
     }
+
+    public void retournerDvd(Document dvd) throws SQLException {
+        Statement req2 = this.conn.createStatement();
+        ResultSet rs = req2.executeQuery("Select idDocument from DVD where idDvd = " + dvd.numero()); //On récupère l'idDocument du DVD pour l'insérer dans emprunt
+        rs.next();
+        int idDocument = rs.getInt(1);
+
+        Statement req3 = this.conn.createStatement();
+        int rsDelete = req3.executeUpdate("DELETE FROM EMPRUNT WHERE idDocument = " + idDocument);
+    }
+
+    public void emprunterDvd(Document dvd, Abonne abonne) throws SQLException {
+        Statement req2 = this.conn.createStatement();
+        ResultSet rs = req2.executeQuery("Select idDocument from DVD where idDvd = " + dvd.numero()); //On récupère l'idDocument du DVD pour l'insérer dans emprunt
+        rs.next();
+        int idDocument = rs.getInt(1);
+
+        //on insert le numeroAbonne et l'idDocument dans EMPRUNT
+        Statement req4 = this.conn.createStatement();
+        int rsInsert = req4.executeUpdate("INSERT INTO EMPRUNT VALUES (" + abonne.getNumeroAdhérent() +"," + idDocument + ", null)");
+
+        Statement req5 = this.conn.createStatement();
+        int rsDelete = req5.executeUpdate("DELETE FROM RESERVATION WHERE idDocument = " + idDocument);
+    }
 }

@@ -45,8 +45,10 @@ public class ServiceReservation extends Service {
 
             sOut.println("Veuillez saisir votre numéro d'abonné.");
             int numAbo = Integer.parseInt(sIn.readLine());
-            sOut.println(Encode.encoder("Veuillez saisir le numéro d'un livre à réserver. \n" + this.listeDesDvdsDisponibles()));
+            sOut.println(Encode.encoder("Veuillez saisir le numéro d'un livre à réserver. \n" + this.listeDesDvds()));
             int numDvdChoisi = Integer.parseInt(sIn.readLine());
+
+
 
             try {
                 réserverDvd(numAbo, numDvdChoisi);
@@ -57,6 +59,8 @@ public class ServiceReservation extends Service {
                 sOut.println("Votre numéro d'abonné n'est pas enregistré.");
             } catch (documentNonLibreException e ) {
                 sOut.println("Ce document n'est pas libre.");
+            } catch (SQLException e ) {
+                sOut.println("Ce document n'est pas libre");
             }
 
 
@@ -65,13 +69,11 @@ public class ServiceReservation extends Service {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
 
     }
 
-    private String listeDesDvdsDisponibles() {
+    private String listeDesDvds() {
         StringBuilder s = new StringBuilder();
         for (int i = 0; i < this.dvds.size(); i++) {
             s.append(this.dvds.get(i).numero() + "-" + this.dvds.get(i).toString() + "\n");
