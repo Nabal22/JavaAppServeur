@@ -12,7 +12,7 @@ public class Client {
     public static void main(String[] args) {
         try {
             // Créer un socket pour se connecter au serveur EmpruntServeur
-            Socket socket = new Socket("localhost", 1001);
+            Socket socket = new Socket("localhost", 1002);
 
             // Créer un scanner pour lire les entrées utilisateur
             Scanner scanner = new Scanner(System.in);
@@ -25,7 +25,7 @@ public class Client {
 
             // Boucle pour permettre à l'utilisateur d'envoyer plusieurs messages
             while (true) {
-                // Lire la réponse du serveur => choisir numéro abonne
+/*                // Lire la réponse du serveur => choisir numéro abonne
                 String reponse = in.readLine();
                 System.out.println("Réponse du serveur : " + Decode.decoder(reponse));
 
@@ -45,7 +45,15 @@ public class Client {
 
                 // Lire la réponse du serveur => réservation effectuée
                 reponse = in.readLine();
+                System.out.println("Réponse du serveur : " + Decode.decoder(reponse));*/
+
+
+                String reponse = in.readLine();
                 System.out.println("Réponse du serveur : " + Decode.decoder(reponse));
+
+                System.out.println("Entrez votre message : ");
+                String message = scanner.next();
+                out.println(message);
 
 
 

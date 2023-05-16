@@ -3,6 +3,7 @@ import model.Abonne;
 import model.Document;
 import serveur.ServeurBTTP;
 import services.ServiceReservation;
+import services.ServiceRetour;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -18,7 +19,10 @@ public class Appli {
 
         ServiceReservation.setAbonnes(abonnes);
         ServiceReservation.setDvds(dvds);
+        ServiceRetour.setAbonnes(abonnes);
+        ServiceRetour.setDvds(dvds);
 
         new Thread(new ServeurBTTP(ServiceReservation.class, 1001)).start();
+        new Thread(new ServeurBTTP(ServiceRetour.class, 1002)).start();
     }
 }

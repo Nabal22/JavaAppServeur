@@ -48,6 +48,8 @@ public class ServiceReservation extends Service {
             sOut.println(Encode.encoder("Veuillez saisir le numéro d'un livre à réserver. \n" + this.listeDesDvdsDisponibles()));
             int numDvdChoisi = Integer.parseInt(sIn.readLine());
 
+
+
             try {
                 réserverDvd(numAbo, numDvdChoisi);
                 sOut.println("Réservation effectuée.");
@@ -57,6 +59,8 @@ public class ServiceReservation extends Service {
                 sOut.println("Votre numéro d'abonné n'est pas enregistré.");
             } catch (documentNonLibreException e ) {
                 sOut.println("Ce document n'est pas libre.");
+            } catch (SQLException e ) {
+                sOut.println("Ce document n'est pas libre");
             }
 
 
@@ -64,8 +68,6 @@ public class ServiceReservation extends Service {
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
             e.printStackTrace();
         }
 

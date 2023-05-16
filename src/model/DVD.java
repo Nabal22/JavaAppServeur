@@ -1,5 +1,6 @@
 package model;
 
+import exceptions.documentNonEmpruntéException;
 import exceptions.documentNonLibreException;
 
 public class DVD implements Document{
@@ -65,9 +66,14 @@ public class DVD implements Document{
 
 
     // retour d’un document ou annulation d‘une réservation
-    public void retour() {
-        this.etat = "libre";
-        this.abonne = null;
+    public void retour() throws documentNonEmpruntéException {
+        if(this.etat.equals("emprunté")) {
+            this.etat = "libre";
+            this.abonne = null;
+        } else {
+            throw new documentNonEmpruntéException();
+        }
+
     };
 
     public String toString() {

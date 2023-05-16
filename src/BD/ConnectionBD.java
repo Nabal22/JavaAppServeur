@@ -88,4 +88,9 @@ public class ConnectionBD {
 
 
     }
+
+    public void retournerDvd(Document dvd) throws SQLException {
+        Statement req3 = this.conn.createStatement();
+        int rs = req3.executeUpdate("DELETE FROM EMPRUNT WHERE idDocument = " + dvd.numero());
+    }
 }
