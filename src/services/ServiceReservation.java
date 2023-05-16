@@ -45,7 +45,7 @@ public class ServiceReservation extends Service {
 
             sOut.println("Veuillez saisir votre numéro d'abonné.");
             int numAbo = Integer.parseInt(sIn.readLine());
-            sOut.println(Encode.encoder("Veuillez saisir le numéro d'un livre à réserver. \n" + this.listeDesDvdsDisponibles()));
+            sOut.println(Encode.encoder("Veuillez saisir le numéro d'un livre à réserver. \n" + this.listeDesDvds()));
             int numDvdChoisi = Integer.parseInt(sIn.readLine());
 
 
@@ -73,7 +73,7 @@ public class ServiceReservation extends Service {
 
     }
 
-    private String listeDesDvdsDisponibles() {
+    private String listeDesDvds() {
         StringBuilder s = new StringBuilder();
         for (int i = 0; i < this.dvds.size(); i++) {
             s.append(this.dvds.get(i).numero() + "-" + this.dvds.get(i).toString() + "\n");

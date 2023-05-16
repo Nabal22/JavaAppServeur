@@ -2,6 +2,7 @@ import BD.ConnectionBD;
 import model.Abonne;
 import model.Document;
 import serveur.ServeurBTTP;
+import services.ServiceEmprunt;
 import services.ServiceReservation;
 import services.ServiceRetour;
 
@@ -21,8 +22,11 @@ public class Appli {
         ServiceReservation.setDvds(dvds);
         ServiceRetour.setAbonnes(abonnes);
         ServiceRetour.setDvds(dvds);
+        ServiceEmprunt.setAbonnes(abonnes);
+        ServiceEmprunt.setDvds((dvds));
 
         new Thread(new ServeurBTTP(ServiceReservation.class, 1001)).start();
         new Thread(new ServeurBTTP(ServiceRetour.class, 1002)).start();
+        new Thread(new ServeurBTTP(ServiceEmprunt.class, 1003)).start();
     }
 }

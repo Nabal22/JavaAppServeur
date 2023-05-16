@@ -55,12 +55,14 @@ public class DVD implements Document{
 
 
     // precondition libre ou réservé par l’abonné qui vient emprunter
-    public void emprunt(Abonne ab) {
-        if (this.etat.equals("réserve") && this.abonne == ab) {
+    public void emprunt(Abonne ab) throws documentNonLibreException {
+        if (this.etat.equals("réservé") && this.abonne == ab) {
             this.etat = "emprunté";
         } else if (this.abonne == null && this.etat.equals("libre")) {
             this.etat = "emprunté";
             this.abonne = ab;
+        } else {
+            throw new documentNonLibreException();
         }
     }
 
