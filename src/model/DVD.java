@@ -3,88 +3,57 @@ package model;
 import exceptions.documentNonEmpruntéException;
 import exceptions.documentNonLibreException;
 
-public class DVD implements Document{
-    int numero;
-    String titre;
+import java.util.Date;
+
+public class DVD extends Document {
     Boolean estPourAdulte;
-    Abonne abonne;
 
-    String etat; //reservé ou emprunté ou libre
-
-    public DVD(int numero, String titre, boolean estPourAdulte, Abonne abonne, String etat) {
-        this.numero = numero;
-        this.titre = titre;
+    public DVD(int numero, String titre, Etat etat, boolean estPourAdulte) {
+        super(numero, titre, etat);
         this.estPourAdulte = estPourAdulte;
-        this.abonne = abonne;
-        this.etat = etat;
     }
 
+    public DVD(int numero, String titre, Etat etat, Abonne abonne, boolean estPourAdulte) {
+        super(numero, titre, etat, abonne);
+        this.estPourAdulte = estPourAdulte;
+    }
+
+    public  DVD(int numero, String titre, Etat etat, Abonne abonne, Date dateReservation, boolean estPourAdulte) {
+        super(numero, titre, etat, abonne, dateReservation);
+        this.estPourAdulte = estPourAdulte;
+    }
+
+    public Boolean getEstPourAdulte() {
+        return estPourAdulte;
+    }
+
+    @Override
+    public boolean estAutorise(Abonne ab) {
+        if (this.estPourAdulte) {
+            return ab.getAge() >= 18;
+        } else {
+            return true;
+        }
+    }
+
+    @Override
     public int numero() {
-        return this.numero;
+        return this.idDocument;
     }
-
-    // return null si pas emprunté ou pas réservé
-    public Abonne empruntePar(){
-        if(this.etat.equals("emprunté")) {
-            return this.abonne;
-        }
-        else {
-            return null;  // Abonné qui a emprunté ce document
-        }
-    }
-
-
-    public Abonne reservePar() {
-        if (this.etat.equals("réservé")) {
-            return this.abonne;
-        } else {
-            return null;
-        }
-    } ; // Abonné qui a réservé ce document
-
-
-    // precondition ni réservé ni emprunté
-    public void reservation(Abonne ab) throws documentNonLibreException {
-        if (this.etat.equals("libre") || (this.etat.equals("réservé") && this.abonne == ab)) {
-            this.etat = "emprunté";
-            this.abonne = ab;
-        } else {
-            throw new documentNonLibreException();
-        }
-    }
-
-
-    // precondition libre ou réservé par l’abonné qui vient emprunter
-    public void emprunt(Abonne ab) throws documentNonLibreException {
-        if (this.etat.equals("réservé") && this.abonne == ab) {
-            this.etat = "emprunté";
-        } else if (this.abonne == null && this.etat.equals("libre")) {
-            this.etat = "emprunté";
-            this.abonne = ab;
-        } else {
-            throw new documentNonLibreException();
-        }
-    }
-
-
-    // retour d’un document ou annulation d‘une réservation
-    public void retour() throws documentNonEmpruntéException {
-        if(this.etat.equals("emprunté")) {
-            this.etat = "libre";
-            this.abonne = null;
-        } else {
-            throw new documentNonEmpruntéException();
-        }
-
-    };
-
+    @Override
     public String toString() {
-        return this.titre + " " + "(" + this.etat + ")";
-    }
+        String estPourAdulteString = this.estPourAdulte ? "oui" : "non";
+        String etatString = this.etat.equals(Etat.EMPRUNTE) ? "emprunté" : this.etat.equals(Etat.LIBRE) ? "libre" : "réservé";
+        String abonneString = this.abonne == null ? "aucun" : this.abonne.toString();
 
-    public Abonne getAbonne() {
-        return this.abonne;
+        return "DVD{" +
+                "idDocument=" + idDocument +
+                ", titre='" + titre + '\'' +
+                ", estPourAdulte=" + estPourAdulteString +
+                ", etat=" + etatString +
+                ", abonne=" + abonneString +
+                ", dateReservation=" + dateReservation +
+                '}';
     }
-
 
 }

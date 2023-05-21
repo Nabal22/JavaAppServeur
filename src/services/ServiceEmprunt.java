@@ -1,16 +1,13 @@
 package services;
 
 import BD.ConnectionBD;
-import bserveur.Service;
 
 import encodage.Encode;
 import exceptions.abonneNonTrouveException;
-import exceptions.documentNonEmpruntéException;
 
-import exceptions.documentNonLibreException;
-import exceptions.documentNonTrouveException;
+import exceptions.*;
 import model.Abonne;
-import model.Document;
+import model.IDocument;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -20,9 +17,7 @@ import java.net.Socket;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class ServiceEmprunt extends Service {
-    private static ArrayList<Abonne> abonnes;
-    private static ArrayList<Document> dvds;
+public class ServiceEmprunt extends ServiceCommun {
 
     private ConnectionBD dbConnect = new ConnectionBD();
 
@@ -30,85 +25,70 @@ public class ServiceEmprunt extends Service {
         super(s);
     }
 
-    public static void setAbonnes(ArrayList<Abonne> abonnes) {
-        ServiceEmprunt.abonnes = abonnes;
-    }
-    public static void setDvds(ArrayList<Document> dvds) {
-        ServiceEmprunt.dvds = dvds;
-    }
-
     @Override
     public void run() {
 
         try {
             this.dbConnect.connectToBD();
-
             BufferedReader sIn = new BufferedReader(new InputStreamReader(s.getInputStream()));
             PrintWriter sOut = new PrintWriter(s.getOutputStream(), true);
 
-            sOut.println("Veuillez saisir votre numéro d'abonné.");
+            sOut.println(Encode.encoder("Veuillez saisir votre numéro abonné."));
             int numAbo = Integer.parseInt(sIn.readLine());
-            sOut.println(Encode.encoder("Veuillez saisir le numéro d'un livre à emprunter. \n" + this.listeDesDvds()));
+             while (!this.isAbonne(numAbo)) {
+                 sOut.println(Encode.encoder("Votre numéro abonné n'est pas reconnu. Veuillez réessayer."));
+                 numAbo = Integer.parseInt(sIn.readLine());
+             }
+
+            sOut.println(Encode.encoder("Veuillez saisir le numéro d'un livre à emprunter. \n" + super.listeDesDocuments()));
             int numDvdChoisi = Integer.parseInt(sIn.readLine());
 
             try {
-                this.emprunterDvd(numAbo, numDvdChoisi);
+                this.emprunterDocument(numAbo, numDvdChoisi);
                 sOut.println(Encode.encoder("Vous avez emprunté ce document."));
-            } catch (SQLException e) {
-                sOut.println(Encode.encoder("Le document n'est pas libre."));
             } catch (documentNonTrouveException e) {
-                sOut.println(Encode.encoder("Le document n'existe pas en base de données."));
-            } catch (abonneNonTrouveException e) {
-                sOut.println(Encode.encoder("Votre numéro abonné n'est pas reconnu."));
+                sOut.println(Encode.encoder("Ce document n'existe pas."));
+            } catch (SQLException e) {
+                sOut.println(Encode.encoder("Erreur SQL."+e.getMessage()));
             } catch (documentNonLibreException e) {
-                sOut.println(Encode.encoder("Le document n'est pas libraae."));
+                sOut.println(Encode.encoder("Ce document n'est pas libre."));
+            } catch (documentDejaEmprunteException e) {
+                sOut.println(Encode.encoder("Ce document est déjà emprunté."));
+            } catch (documentDejaReserveException e) {
+                sOut.println(Encode.encoder("Ce document est déjà réservé."));
+            } catch (IOException e) {
+                sOut.println(Encode.encoder("Erreur d'entrée/sortie."));
+            } catch (InterruptedException e) {
+                sOut.println(Encode.encoder("Erreur d'interruption."));
             }
-
 
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (abonneNonTrouveException e) {
+            throw new RuntimeException(e);
         } catch (ClassNotFoundException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
 
     }
 
-    private Document getDvd(int numDvd) throws documentNonTrouveException {
-        for (int i = 0; i < this.dvds.size(); i++) {
-            if(this.dvds.get(i).numero() == numDvd) {
-                return this.dvds.get(i);
+    private void emprunterDocument(int numAbo, int numDocument) throws abonneNonTrouveException, documentNonTrouveException, SQLException, documentNonLibreException, IOException, documentDejaEmprunteException, documentDejaReserveException, InterruptedException {
+        synchronized (this) {
+            Abonne ab = this.getAbonne(numAbo);
+            IDocument d = super.getDocument(numDocument);
+            if (d.empruntePar() == null &&
+                    (d.reservePar() == null || d.reservePar().getNumeroAdhérent() == ab.getNumeroAdhérent())) {
+                d.emprunt(ab);
+                this.dbConnect.emprunterDocument(d, ab);
+                System.out.println("Document emprunté.");
+            } else {
+                if (d.empruntePar() != null) {
+                    throw new documentDejaEmprunteException();
+                } else if (d.reservePar() != null || d.reservePar().getNumeroAdhérent() != ab.getNumeroAdhérent()) {
+                    throw new documentDejaReserveException();
+                }
+                throw new documentNonLibreException();
             }
         }
-        throw new documentNonTrouveException();
     }
-
-    private Abonne getAbonne(int numAbo) throws abonneNonTrouveException {
-        for (int i = 0; i < this.abonnes.size(); i++) {
-            if(this.abonnes.get(i).getNumeroAdhérent() == numAbo) {
-                return this.abonnes.get(i);
-            }
-        }
-        throw new abonneNonTrouveException();
-    }
-
-    private void emprunterDvd(int numAbo, int numDvd) throws abonneNonTrouveException, documentNonTrouveException, SQLException, documentNonLibreException {
-        Abonne ab = this.getAbonne(numAbo);
-        Document d = this.getDvd(numDvd);
-        if((d.empruntePar() == null && d.reservePar() == null) || (d.empruntePar() == null && d.reservePar() == ab)) {
-            d.emprunt(ab);
-            this.dbConnect.emprunterDvd(d, ab);
-        } else {
-            throw new documentNonLibreException();
-        }
-
-    }
-
-    private String listeDesDvds() {
-        StringBuilder s = new StringBuilder();
-        for (int i = 0; i < this.dvds.size(); i++) {
-            s.append(this.dvds.get(i).numero() + "-" + this.dvds.get(i).toString() + "\n");
-        }
-        return s.toString();
-    }
-
 }

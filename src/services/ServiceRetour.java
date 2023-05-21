@@ -7,7 +7,7 @@ import exceptions.documentNonEmpruntéException;
 
 import exceptions.documentNonTrouveException;
 import model.Abonne;
-import model.Document;
+import model.IDocument;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,7 +19,7 @@ import java.util.ArrayList;
 
 public class ServiceRetour extends Service {
     private static ArrayList<Abonne> abonnes;
-    private static ArrayList<Document> dvds;
+    private static ArrayList<IDocument> dvds;
 
     private ConnectionBD dbConnect = new ConnectionBD();
 
@@ -32,7 +32,7 @@ public class ServiceRetour extends Service {
     public static void setAbonnes(ArrayList<Abonne> abonnes) {
         ServiceRetour.abonnes = abonnes;
     }
-    public static void setDvds(ArrayList<Document> dvds) {
+    public static void setDvds(ArrayList<IDocument> dvds) {
         ServiceRetour.dvds = dvds;
     }
 
@@ -50,14 +50,11 @@ public class ServiceRetour extends Service {
 
             System.out.println("test");
 
-            for (int i = 0; i < dvds.size(); i++) {
-                System.out.println(dvds.get(i).toString() + " " + dvds.get(i).getAbonne());
-            }
+
 
             try {
                 this.retournerDVD(getDvd(numDvdChoisi));
                 sOut.println("Le document a bien été retourné.");
-
             } catch (documentNonEmpruntéException e) {
                 sOut.println("Le document n'est pas emprunté.");
             } catch (documentNonTrouveException e) {
@@ -75,7 +72,7 @@ public class ServiceRetour extends Service {
 
     }
 
-    private Document getDvd(int numDvd) throws documentNonTrouveException {
+    private IDocument getDvd(int numDvd) throws documentNonTrouveException {
         for (int i = 0; i < this.dvds.size(); i++) {
             if(this.dvds.get(i).numero() == numDvd) {
                 return this.dvds.get(i);
@@ -83,8 +80,8 @@ public class ServiceRetour extends Service {
         }
         throw new documentNonTrouveException();
     }
-    public void retournerDVD(Document dvd) throws documentNonEmpruntéException, SQLException {
+    public void retournerDVD(IDocument dvd) throws documentNonEmpruntéException, SQLException {
         dvd.retour();
-        this.dbConnect.retournerDvd(dvd);
+        this.dbConnect.retournerDocument(dvd);
     }
 }
