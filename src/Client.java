@@ -56,7 +56,6 @@ public class Client {
                 out.println(message);
 
 
-
                 // Si l'utilisateur entre "exit", sortir de la boucle
                 if (message.equals("exit")) {
                     break;

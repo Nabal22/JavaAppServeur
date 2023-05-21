@@ -6,7 +6,7 @@ import exceptions.abonneNonTrouveException;
 import exceptions.documentNonLibreException;
 import exceptions.documentNonTrouveException;
 import model.Abonne;
-import model.Document;
+import model.IDocument;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 public class ServiceReservation extends Service {
     private static ArrayList<Abonne> abonnes;
-    private static ArrayList<Document> dvds;
+    private static ArrayList<IDocument> dvds;
 
     private ConnectionBD dbConnect = new ConnectionBD();
 
@@ -31,7 +31,7 @@ public class ServiceReservation extends Service {
     public static void setAbonnes(ArrayList<Abonne> abonnes) {
         ServiceReservation.abonnes = abonnes;
     }
-    public static void setDvds(ArrayList<Document> dvds) {
+    public static void setDvds(ArrayList<IDocument> dvds) {
         ServiceReservation.dvds = dvds;
     }
 
@@ -83,9 +83,9 @@ public class ServiceReservation extends Service {
 
     private void réserverDvd(int numAbo, int numDvd) throws SQLException, abonneNonTrouveException, documentNonTrouveException, documentNonLibreException {
             Abonne ab = this.getAbonne(numAbo);
-            Document d = this.getDvd(numDvd);
+            IDocument d = this.getDvd(numDvd);
             d.reservation(ab);
-            this.dbConnect.reserverDvdBD(ab, d);
+            this.dbConnect.reserverDocumentBD(ab, d);
     }
 
     //retourne l'abonne qui a le numéro
@@ -97,7 +97,7 @@ public class ServiceReservation extends Service {
         }
         throw new abonneNonTrouveException();
     }
-    private Document getDvd(int numDvd) throws documentNonTrouveException {
+    private IDocument getDvd(int numDvd) throws documentNonTrouveException {
         for (int i = 0; i < this.dvds.size(); i++) {
             if(this.dvds.get(i).numero() == numDvd) {
                 return this.dvds.get(i);

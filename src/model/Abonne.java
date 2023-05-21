@@ -1,11 +1,13 @@
 package model;
 
+import java.util.Date;
+
 public class Abonne {
     int numeroAdhérent;
     String nom;
-    String dateNaissance;
+    Date dateNaissance;
 
-    public Abonne(int numero, String nom, String dateNaissance) {
+    public Abonne(int numero, String nom, Date dateNaissance) {
         this.numeroAdhérent = numero;
         this.nom = nom;
         this.dateNaissance = dateNaissance;
@@ -15,13 +17,15 @@ public class Abonne {
         return numeroAdhérent;
     }
 
-    public String getNom() {
-        return nom;
+    public int getAge() {
+        return new Date().getYear() - this.dateNaissance.getYear();
     }
 
-    public String getDateNaissance() {
-        return dateNaissance;
+    public String toString() {
+        return "Abonne{" +
+                "numeroAdhérent=" + numeroAdhérent +
+                ", nom='" + nom + '\'' +
+                ", dateNaissance='" + dateNaissance + '\'' +
+                '}';
     }
-
-
 }
