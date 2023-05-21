@@ -40,7 +40,7 @@ public class ServiceEmprunt extends ServiceCommun {
                  numAbo = Integer.parseInt(sIn.readLine());
              }
 
-            sOut.println(Encode.encoder("Veuillez saisir le numéro d'un livre à emprunter. \n" + super.listeDesDocuments()));
+            sOut.println(Encode.encoder("Veuillez saisir le numéro d'un document à emprunter. \n" + super.listeDesDocuments()));
             int numDvdChoisi = Integer.parseInt(sIn.readLine());
 
             try {
@@ -60,6 +60,8 @@ public class ServiceEmprunt extends ServiceCommun {
                 sOut.println(Encode.encoder("Erreur d'entrée/sortie."));
             } catch (InterruptedException e) {
                 sOut.println(Encode.encoder("Erreur d'interruption."));
+            } catch (documentPourAdulteException e) {
+                sOut.println(Encode.encoder("Vous n'avez pas l'age requis pour emprunter ce document."));
             }
 
         } catch (IOException e) {
@@ -72,7 +74,7 @@ public class ServiceEmprunt extends ServiceCommun {
 
     }
 
-    private void emprunterDocument(int numAbo, int numDocument) throws abonneNonTrouveException, documentNonTrouveException, SQLException, documentNonLibreException, IOException, documentDejaEmprunteException, documentDejaReserveException, InterruptedException {
+    private void emprunterDocument(int numAbo, int numDocument) throws abonneNonTrouveException, documentNonTrouveException, SQLException, documentNonLibreException, IOException, documentDejaEmprunteException, documentDejaReserveException, InterruptedException, documentPourAdulteException {
         synchronized (this) {
             Abonne ab = this.getAbonne(numAbo);
             IDocument d = super.getDocument(numDocument);

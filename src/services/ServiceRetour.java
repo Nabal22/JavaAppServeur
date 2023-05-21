@@ -17,7 +17,7 @@ import java.net.Socket;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class ServiceRetour extends Service {
+public class ServiceRetour extends ServiceCommun {
     private static ArrayList<Abonne> abonnes;
     private static ArrayList<IDocument> dvds;
 
@@ -46,14 +46,14 @@ public class ServiceRetour extends Service {
             PrintWriter sOut = new PrintWriter(s.getOutputStream(), true);
 
             sOut.println("Veuillez saisir le numéro du document à retourner.");
-            int numDvdChoisi = Integer.parseInt(sIn.readLine());
+            int numDocumentChoisi = Integer.parseInt(sIn.readLine());
 
             System.out.println("test");
 
 
 
             try {
-                this.retournerDVD(getDvd(numDvdChoisi));
+                this.retournerDocument(getDocument(numDocumentChoisi));
                 sOut.println("Le document a bien été retourné.");
             } catch (documentNonEmpruntéException e) {
                 sOut.println("Le document n'est pas emprunté.");
@@ -72,16 +72,8 @@ public class ServiceRetour extends Service {
 
     }
 
-    private IDocument getDvd(int numDvd) throws documentNonTrouveException {
-        for (int i = 0; i < this.dvds.size(); i++) {
-            if(this.dvds.get(i).numero() == numDvd) {
-                return this.dvds.get(i);
-            }
-        }
-        throw new documentNonTrouveException();
-    }
-    public void retournerDVD(IDocument dvd) throws documentNonEmpruntéException, SQLException {
-        dvd.retour();
-        this.dbConnect.retournerDocument(dvd);
+    public void retournerDocument(IDocument document) throws documentNonEmpruntéException, SQLException {
+        document.retour();
+        this.dbConnect.retournerDocument(document);
     }
 }

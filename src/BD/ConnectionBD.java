@@ -105,7 +105,7 @@ public class ConnectionBD {
         int idDocument = document.numero();
         Date date = new Date();
         Statement reqInsert = this.conn.createStatement();
-        int rsInsert = reqInsert.executeUpdate("INSERT INTO RESERVATION VALUES (" + abonne.getNumeroAdhérent() + ", " + idDocument + ", '" + date + "')");
+        int rsInsert = reqInsert.executeUpdate("INSERT INTO RESERVATION VALUES (" + abonne.getNumeroAdhérent() + ", " + idDocument + ", '" + java.sql.Date.valueOf(java.time.LocalDate.now()) + "')");
     }
 
     public void retournerDocument(IDocument document) throws SQLException {
@@ -120,11 +120,11 @@ public class ConnectionBD {
             //on insert le numeroAbonne et l'idDocument dans EMPRUNT
             Statement req4 = this.conn.createStatement();
             int rsInsert = req4.executeUpdate("INSERT INTO EMPRUNT VALUES (" + abonne.getNumeroAdhérent() +"," + idDocument + ", '" + java.sql.Date.valueOf(java.time.LocalDate.now()) + "')");
-            if (document.reservePar() != null) {
-                //on supprime la reservation
-                Statement req5 = this.conn.createStatement();
-                int rsDelete = req5.executeUpdate("DELETE FROM RESERVATION WHERE idDocument = " + idDocument);
-            }
+
+            //on supprime la reservation
+            Statement req5 = this.conn.createStatement();
+            int rsDelete = req5.executeUpdate("DELETE FROM RESERVATION WHERE idDocument = " + idDocument);
+
             System.out.println("Emprunt effectué");
         }
         else {

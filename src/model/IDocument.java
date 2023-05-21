@@ -1,7 +1,6 @@
 package model;
 
-import exceptions.documentNonEmpruntéException;
-import exceptions.documentNonLibreException;
+import exceptions.*;
 
 public interface IDocument {
     int numero();
@@ -11,10 +10,10 @@ public interface IDocument {
     Abonne reservePar() ; // Abonné qui a réservé ce document
 
     // precondition ni réservé ni emprunté
-    void reservation(Abonne ab) throws documentNonLibreException;
+    void reservation(Abonne ab) throws documentNonLibreException, documentDejaEmprunteException, documentDejaReserveException, documentPourAdulteException;
 
     // precondition libre ou réservé par l’abonné qui vient emprunter
-    void emprunt(Abonne ab) throws documentNonLibreException;
+    void emprunt(Abonne ab) throws documentNonLibreException, documentPourAdulteException;
 
     // retour d’un document ou annulation d‘une réservation
     void retour() throws documentNonEmpruntéException;
