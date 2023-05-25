@@ -3,23 +3,21 @@ package services;
 import BD.ConnectionBD;
 
 import encodage.Encode;
-import exceptions.abonneNonTrouveException;
 
-import exceptions.*;
+import exceptions.RestrictionException;
 import model.Abonne;
 import model.IDocument;
 
+import java.awt.geom.RectangularShape;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.sql.SQLException;
-import java.util.ArrayList;
 
 public class ServiceEmprunt extends ServiceCommun {
 
-    private ConnectionBD dbConnect = new ConnectionBD();
 
     public ServiceEmprunt(Socket s) {
         super(s);
@@ -29,7 +27,6 @@ public class ServiceEmprunt extends ServiceCommun {
     public void run() {
 
         try {
-            this.dbConnect.connectToBD();
             BufferedReader sIn = new BufferedReader(new InputStreamReader(s.getInputStream()));
             PrintWriter sOut = new PrintWriter(s.getOutputStream(), true);
 
@@ -46,29 +43,15 @@ public class ServiceEmprunt extends ServiceCommun {
             try {
                 this.emprunterDocument(numAbo, numDvdChoisi);
                 sOut.println(Encode.encoder("Vous avez emprunté ce document."));
-            } catch (documentNonTrouveException e) {
-                sOut.println(Encode.encoder("Ce document n'existe pas."));
+            } catch (RestrictionException e) {
+                sOut.println(e.getMessage());
             } catch (SQLException e) {
                 sOut.println(Encode.encoder("Erreur SQL."+e.getMessage()));
-            } catch (documentNonLibreException e) {
-                sOut.println(Encode.encoder("Ce document n'est pas libre."));
-            } catch (documentDejaEmprunteException e) {
-                sOut.println(Encode.encoder("Ce document est déjà emprunté."));
-            } catch (documentDejaReserveException e) {
-                sOut.println(Encode.encoder("Ce document est déjà réservé."));
-            } catch (IOException e) {
-                sOut.println(Encode.encoder("Erreur d'entrée/sortie."));
-            } catch (InterruptedException e) {
-                sOut.println(Encode.encoder("Erreur d'interruption."));
-            } catch (documentPourAdulteException e) {
-                sOut.println(Encode.encoder("Vous n'avez pas l'age requis pour emprunter ce document."));
             }
 
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (abonneNonTrouveException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
+        } catch (RestrictionException e) {
             throw new RuntimeException(e);
         }
 
@@ -81,15 +64,14 @@ public class ServiceEmprunt extends ServiceCommun {
                 if (d.empruntePar() == null &&
                         (d.reservePar() == null || d.reservePar().getNumeroAdhérent() == ab.getNumeroAdhérent())) {
                     d.emprunt(ab);
-                    this.dbConnect.emprunterDocument(d, ab);
+                    super.dbConnect.emprunterDocument(d, ab);
                     System.out.println("Document emprunté.");
                 } else {
-                    if (d.empruntePar() != null) {
-                        throw new documentDejaEmprunteException();
-                    } else if (d.reservePar() != null || d.reservePar().getNumeroAdhérent() != ab.getNumeroAdhérent()) {
-                        throw new documentDejaReserveException();
-                    }
-                    throw new documentNonLibreException();
+                if (d.empruntePar() != null) {
+                    throw new RestrictionException("Document déjà emprunté");
+                } else if (d.reservePar() != null || d.reservePar().getNumeroAdhérent() != ab.getNumeroAdhérent()) {
+                    throw new RestrictionException("Document déjà réservé");
+                }
             }
         }
     }
