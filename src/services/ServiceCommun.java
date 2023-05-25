@@ -14,10 +14,10 @@ public class ServiceCommun extends Service {
     private static ArrayList<Abonne> abonnes;
     private static ArrayList<IDocument> documents;
 
-    protected ConnectionBD dbConnect;
+    protected static ConnectionBD dbConnect;
 
     public static void setConnectionDB(ConnectionBD dbConnect) {
-        dbConnect = dbConnect;
+        ServiceCommun.dbConnect = dbConnect;
     }
 
     public static void setAbonnes(ArrayList<Abonne> abonnes) {
