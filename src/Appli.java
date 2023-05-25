@@ -1,4 +1,5 @@
 import BD.ConnectionBD;
+import bserveur.Service;
 import model.Abonne;
 import model.IDocument;
 import serveur.ServeurBTTP;
@@ -20,11 +21,14 @@ public class Appli {
 
 
         ServiceReservation.setAbonnes(abonnes);
-        ServiceReservation.setDvds(dvds);
+        ServiceReservation.setDocuments(dvds);
+        ServiceReservation.setConnectionDB(dbConnect);
         ServiceRetour.setAbonnes(abonnes);
-        ServiceRetour.setDvds(dvds);
+        ServiceRetour.setDocuments(dvds);
+        ServiceRetour.setConnectionDB(dbConnect);
         ServiceEmprunt.setAbonnes(abonnes);
         ServiceEmprunt.setDocuments((dvds));
+        ServiceRetour.setConnectionDB(dbConnect);
 
         new Thread(new ServeurBTTP(ServiceReservation.class, 1001)).start();
         new Thread(new ServeurBTTP(ServiceRetour.class, 1002)).start();

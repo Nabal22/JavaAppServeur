@@ -1,8 +1,5 @@
 package model;
 
-import exceptions.documentNonEmpruntéException;
-import exceptions.documentNonLibreException;
-
 import java.util.Date;
 
 public class DVD extends Document {
