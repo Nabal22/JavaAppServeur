@@ -2,8 +2,7 @@ package services;
 
 import BD.ConnectionBD;
 import bserveur.Service;
-import exceptions.abonneNonTrouveException;
-import exceptions.documentNonTrouveException;
+import exceptions.RestrictionException;
 import model.Abonne;
 import model.IDocument;
 
@@ -15,7 +14,11 @@ public class ServiceCommun extends Service {
     private static ArrayList<Abonne> abonnes;
     private static ArrayList<IDocument> documents;
 
-    private ConnectionBD dbConnect = new ConnectionBD();
+    protected ConnectionBD dbConnect;
+
+    public static void setConnectionDB(ConnectionBD dbConnect) {
+        dbConnect = dbConnect;
+    }
 
     public static void setAbonnes(ArrayList<Abonne> abonnes) {
         ServiceCommun.abonnes = abonnes;
@@ -24,6 +27,9 @@ public class ServiceCommun extends Service {
         ServiceCommun.documents = documents;
     }
 
+    public ConnectionBD getDbConnect() {
+        return dbConnect;
+    }
 
     public ServiceCommun(Socket s) {
         super(s);
@@ -32,13 +38,13 @@ public class ServiceCommun extends Service {
     @Override
     public void run() {}
 
-    protected IDocument getDocument(int numDvd) throws documentNonTrouveException {
+    protected IDocument getDocument(int numDvd) throws RestrictionException {
         for (int i = 0; i < this.documents.size(); i++) {
             if(this.documents.get(i).numero() == numDvd) {
                 return this.documents.get(i);
             }
         }
-        throw new documentNonTrouveException();
+        throw new RestrictionException("Document non trouvé.");
     }
 
     protected boolean isAbonne(int numAbo) {
@@ -50,13 +56,13 @@ public class ServiceCommun extends Service {
         return false;
     }
 
-    protected Abonne getAbonne(int numAbo) throws abonneNonTrouveException {
+    protected Abonne getAbonne(int numAbo) throws RestrictionException {
         for (int i = 0; i < this.abonnes.size(); i++) {
             if(this.abonnes.get(i).getNumeroAdhérent() == numAbo) {
                 return this.abonnes.get(i);
             }
         }
-        throw new abonneNonTrouveException();
+        throw new RestrictionException("Abonne non trouvé");
     }
 
     protected String listeDesDocuments() {

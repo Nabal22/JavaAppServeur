@@ -76,30 +76,21 @@ public abstract class Document implements IDocument {
 
 
     // precondition libre ou réservé par l’abonné qui vient emprunter
-    public void emprunt(Abonne ab) throws documentNonLibreException, documentPourAdulteException {
-        if ((this.etat.equals(Etat.RESERVE) && this.abonne == ab) ||
+    public void emprunt(Abonne ab)  {
+        assert((this.etat.equals(Etat.RESERVE) && this.abonne == ab) ||
                 (this.etat.equals(Etat.LIBRE) && this.abonne == null)
-                && this.estAutorise(ab)) {
+                        && this.estAutorise(ab));
             this.etat = Etat.EMPRUNTE;
             this.abonne = ab;
-        } else if ((this.etat.equals(Etat.RESERVE) && this.abonne == ab) ||
-                (this.etat.equals(Etat.LIBRE) && this.abonne == null)
-                        && !this.estAutorise(ab)){
-            throw new documentPourAdulteException();
-        } else {
-            throw new documentNonLibreException();
-        }
+
     }
 
 
     // retour d’un document ou annulation d‘une réservation
-    public void retour() throws documentNonEmpruntéException {
-        if(this.etat.equals(Etat.EMPRUNTE)) {
-            this.etat = Etat.LIBRE;
-            this.abonne = null;
-        } else {
-            throw new documentNonEmpruntéException();
-        }
+    public void retour() {
+        assert(this.etat.equals(Etat.EMPRUNTE));
+        this.etat = Etat.LIBRE;
+        this.abonne = null;
     };
 
     public abstract boolean estAutorise(Abonne ab);
