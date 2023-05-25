@@ -57,7 +57,7 @@ public class ServiceEmprunt extends ServiceCommun {
 
     }
 
-    private void emprunterDocument(int numAbo, int numDocument) throws abonneNonTrouveException, documentNonTrouveException, SQLException, documentNonLibreException, IOException, documentDejaEmprunteException, documentDejaReserveException, InterruptedException, documentPourAdulteException {
+    private void emprunterDocument(int numAbo, int numDocument) throws  SQLException, IOException {
             Abonne ab = this.getAbonne(numAbo);
             IDocument d = super.getDocument(numDocument);
             synchronized (d) {

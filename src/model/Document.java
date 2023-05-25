@@ -65,7 +65,7 @@ public abstract class Document implements IDocument {
         if(this.estAutorise(ab)) {
             this.etat = Etat.RESERVE;
             this.abonne = ab;
-            this.dateReservation = new Date();
+            this.dateReservation = new GregorianCalendar();
         } else {
             throw new RestrictionException("Vous n'avez pas l'age requis pour emprunter ce document.");
         }
