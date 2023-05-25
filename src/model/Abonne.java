@@ -3,9 +3,9 @@ package model;
 import java.util.Date;
 
 public class Abonne {
-    int numeroAdhérent;
-    String nom;
-    Date dateNaissance;
+    protected int numeroAdhérent;
+    protected String nom;
+    protected Date dateNaissance;
 
     public Abonne(int numero, String nom, Date dateNaissance) {
         this.numeroAdhérent = numero;

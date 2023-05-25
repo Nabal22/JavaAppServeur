@@ -75,21 +75,21 @@ public class ServiceEmprunt extends ServiceCommun {
     }
 
     private void emprunterDocument(int numAbo, int numDocument) throws abonneNonTrouveException, documentNonTrouveException, SQLException, documentNonLibreException, IOException, documentDejaEmprunteException, documentDejaReserveException, InterruptedException, documentPourAdulteException {
-        synchronized (this) {
             Abonne ab = this.getAbonne(numAbo);
             IDocument d = super.getDocument(numDocument);
-            if (d.empruntePar() == null &&
-                    (d.reservePar() == null || d.reservePar().getNumeroAdhérent() == ab.getNumeroAdhérent())) {
-                d.emprunt(ab);
-                this.dbConnect.emprunterDocument(d, ab);
-                System.out.println("Document emprunté.");
-            } else {
-                if (d.empruntePar() != null) {
-                    throw new documentDejaEmprunteException();
-                } else if (d.reservePar() != null || d.reservePar().getNumeroAdhérent() != ab.getNumeroAdhérent()) {
-                    throw new documentDejaReserveException();
-                }
-                throw new documentNonLibreException();
+            synchronized (d) {
+                if (d.empruntePar() == null &&
+                        (d.reservePar() == null || d.reservePar().getNumeroAdhérent() == ab.getNumeroAdhérent())) {
+                    d.emprunt(ab);
+                    this.dbConnect.emprunterDocument(d, ab);
+                    System.out.println("Document emprunté.");
+                } else {
+                    if (d.empruntePar() != null) {
+                        throw new documentDejaEmprunteException();
+                    } else if (d.reservePar() != null || d.reservePar().getNumeroAdhérent() != ab.getNumeroAdhérent()) {
+                        throw new documentDejaReserveException();
+                    }
+                    throw new documentNonLibreException();
             }
         }
     }

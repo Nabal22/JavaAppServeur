@@ -11,6 +11,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 public class ConnectionBD {
     private Connection conn;
@@ -76,9 +77,13 @@ public class ConnectionBD {
                     break;
 
                     case "RESERVE":
+                        Timestamp timestamp = rs.getTimestamp(8);
+                        Date date = new Date(timestamp.getTime());
+                        GregorianCalendar calendar = new GregorianCalendar();
+                        calendar.setTime(date);
                         switch (type) {
                             case "dvd":
-                                document = new DVD(rs.getInt(1), rs.getString(2), Etat.RESERVE, this.getAbonneById(abonnes,rs.getInt(6)) , new Date(), rs.getBoolean(3));
+                                document = new DVD(rs.getInt(1), rs.getString(2), Etat.RESERVE, this.getAbonneById(abonnes,rs.getInt(6)) , calendar, rs.getBoolean(3));
                                 break;
                         }
                 }
@@ -105,7 +110,7 @@ public class ConnectionBD {
         int idDocument = document.numero();
         Date date = new Date();
         Statement reqInsert = this.conn.createStatement();
-        int rsInsert = reqInsert.executeUpdate("INSERT INTO RESERVATION VALUES (" + abonne.getNumeroAdhérent() + ", " + idDocument + ", '" + java.sql.Date.valueOf(java.time.LocalDate.now()) + "')");
+        int rsInsert = reqInsert.executeUpdate("INSERT INTO RESERVATION VALUES (" + abonne.getNumeroAdhérent() + ", " + idDocument + ", '" + formatGregorianCalendar(getCurrentGregorianCalendar()) + "')");
     }
 
     public void retournerDocument(IDocument document) throws SQLException {
@@ -119,7 +124,7 @@ public class ConnectionBD {
         if(document.reservePar() == null || document.reservePar().getNumeroAdhérent() == abonne.getNumeroAdhérent()) {
             //on insert le numeroAbonne et l'idDocument dans EMPRUNT
             Statement req4 = this.conn.createStatement();
-            int rsInsert = req4.executeUpdate("INSERT INTO EMPRUNT VALUES (" + abonne.getNumeroAdhérent() +"," + idDocument + ", '" + java.sql.Date.valueOf(java.time.LocalDate.now()) + "')");
+            int rsInsert = req4.executeUpdate("INSERT INTO EMPRUNT VALUES (" + abonne.getNumeroAdhérent() +"," + idDocument + ", '" + formatGregorianCalendar(getCurrentGregorianCalendar()) + "')");
 
             //on supprime la reservation
             Statement req5 = this.conn.createStatement();
@@ -130,5 +135,18 @@ public class ConnectionBD {
         else {
             System.out.println("Ce document est réservé par un autre abonné");
         }
+    }
+
+    private GregorianCalendar getCurrentGregorianCalendar(){
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+        Date date = new Date(timestamp.getTime());
+        GregorianCalendar calendar = new GregorianCalendar();
+        calendar.setTime(date);
+        return calendar;
+    }
+
+    private String formatGregorianCalendar(GregorianCalendar calendar) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return dateFormat.format(calendar.getTime());
     }
 }

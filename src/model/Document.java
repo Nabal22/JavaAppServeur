@@ -2,18 +2,18 @@ package model;
 
 import exceptions.*;
 
-import java.util.Date;
+import java.util.GregorianCalendar;
 
 public abstract class Document implements IDocument {
 
-    int idDocument;
-    String titre;
+    protected int idDocument;
+    protected String titre;
 
-    Enum etat;//reservé ou emprunté ou libre
+    protected Enum etat;//reservé ou emprunté ou libre
 
-    Abonne abonne;
+    protected Abonne abonne;
 
-    Date dateReservation;
+    protected GregorianCalendar dateReservation;
 
     public Document(int idDocument, String titre, Etat etat) {
         this.idDocument = idDocument;
@@ -28,7 +28,7 @@ public abstract class Document implements IDocument {
         this.abonne = abonne;
     }
 
-    public Document(int idDocument, String titre, Etat etat, Abonne abonne, Date dateReservation) {
+    public Document(int idDocument, String titre, Etat etat, Abonne abonne, GregorianCalendar dateReservation) {
         this.idDocument = idDocument;
         this.titre = titre;
         this.etat = etat;
@@ -64,7 +64,7 @@ public abstract class Document implements IDocument {
         if (this.etat.equals(Etat.LIBRE) && this.estAutorise(ab)){
             this.etat = Etat.RESERVE;
             this.abonne = ab;
-            this.dateReservation = new Date();
+            this.dateReservation = new GregorianCalendar();
         } else if (this.etat.equals(Etat.EMPRUNTE)) {
             throw new documentDejaEmprunteException();
         } else if (this.etat.equals(Etat.RESERVE)) {
@@ -100,20 +100,24 @@ public abstract class Document implements IDocument {
         } else {
             throw new documentNonEmpruntéException();
         }
-
     };
 
     public abstract boolean estAutorise(Abonne ab);
 
     public String toString() {
-        return this.titre + " " + "(" + this.etat + ")";
+        String etatString = this.etat.equals(Etat.EMPRUNTE) ? "emprunté" : this.etat.equals(Etat.LIBRE) ? "libre" : "réservé";
+        String abonneString = this.abonne == null ? "aucun" : this.abonne.toString();
+
+        return "Document [idDocument=" + idDocument + ", titre=" + titre + ", état=" + etatString + ", abonné=" + abonneString + ", date de réservation=" + dateReservation + "]";
     }
+
 
     public Abonne getAbonne() {
         return this.abonne;
     }
 
-    public Date getDateReservation() {
+    public GregorianCalendar getDateReservation() {
         return this.dateReservation;
     }
+
 }

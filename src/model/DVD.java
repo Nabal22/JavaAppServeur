@@ -4,9 +4,10 @@ import exceptions.documentNonEmpruntéException;
 import exceptions.documentNonLibreException;
 
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 public class DVD extends Document {
-    Boolean estPourAdulte;
+    protected Boolean estPourAdulte;
 
     public DVD(int numero, String titre, Etat etat, boolean estPourAdulte) {
         super(numero, titre, etat);
@@ -18,7 +19,7 @@ public class DVD extends Document {
         this.estPourAdulte = estPourAdulte;
     }
 
-    public  DVD(int numero, String titre, Etat etat, Abonne abonne, Date dateReservation, boolean estPourAdulte) {
+    public  DVD(int numero, String titre, Etat etat, Abonne abonne, GregorianCalendar dateReservation, boolean estPourAdulte) {
         super(numero, titre, etat, abonne, dateReservation);
         this.estPourAdulte = estPourAdulte;
     }
@@ -42,18 +43,12 @@ public class DVD extends Document {
     }
     @Override
     public String toString() {
+        String documentString = super.toString();
         String estPourAdulteString = this.estPourAdulte ? "oui" : "non";
-        String etatString = this.etat.equals(Etat.EMPRUNTE) ? "emprunté" : this.etat.equals(Etat.LIBRE) ? "libre" : "réservé";
-        String abonneString = this.abonne == null ? "aucun" : this.abonne.toString();
 
-        return "DVD{" +
-                "idDocument=" + idDocument +
-                ", titre='" + titre + '\'' +
-                ", estPourAdulte=" + estPourAdulteString +
-                ", etat=" + etatString +
-                ", abonne=" + abonneString +
-                ", dateReservation=" + dateReservation +
-                '}';
+        return "DVD{" + super.toString() + "estPourAdulte : "+ estPourAdulteString+"}";
     }
+
+
 
 }
