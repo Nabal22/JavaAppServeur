@@ -60,28 +60,30 @@ public abstract class Document implements IDocument {
 
 
     // precondition ni réservé ni emprunté
-    public void reservation(Abonne ab) throws documentDejaEmprunteException, documentDejaReserveException, documentPourAdulteException {
-        if (this.etat.equals(Etat.LIBRE) && this.estAutorise(ab)){
+    public void reservation(Abonne ab)  {
+        assert (this.etat.equals(Etat.LIBRE) && this.estAutorise(ab));
+        if(this.estAutorise(ab)) {
             this.etat = Etat.RESERVE;
             this.abonne = ab;
-            this.dateReservation = new GregorianCalendar();
-        } else if (this.etat.equals(Etat.EMPRUNTE)) {
-            throw new documentDejaEmprunteException();
-        } else if (this.etat.equals(Etat.RESERVE)) {
-            throw new documentDejaReserveException();
-        } else if (!this.estAutorise(ab)) {
-            throw new documentPourAdulteException();
+            this.dateReservation = new Date();
+        } else {
+            throw new RestrictionException("Vous n'avez pas l'age requis pour emprunter ce document.");
         }
+
     }
 
 
     // precondition libre ou réservé par l’abonné qui vient emprunter
     public void emprunt(Abonne ab)  {
         assert((this.etat.equals(Etat.RESERVE) && this.abonne == ab) ||
-                (this.etat.equals(Etat.LIBRE) && this.abonne == null)
-                        && this.estAutorise(ab));
+                (this.etat.equals(Etat.LIBRE) && this.abonne == null));
+        if (this.estAutorise(ab)) {
             this.etat = Etat.EMPRUNTE;
             this.abonne = ab;
+        } else {
+            throw new RestrictionException("Vous n'avez pas l'âge requis pour emprunter ce document.");
+        }
+
 
     }
 

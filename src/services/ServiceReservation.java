@@ -1,4 +1,5 @@
 package services;
+import BD.ConnectionBD;
 import encodage.Encode;
 import exceptions.*;
 import model.Abonne;
@@ -19,8 +20,6 @@ public class ServiceReservation extends ServiceCommun {
     public ServiceReservation(Socket s) {
         super(s);
     }
-
-
 
     @Override
     public void run() {
@@ -62,8 +61,17 @@ public class ServiceReservation extends ServiceCommun {
     private void réserverDocument(int numAbo, int numDocument) throws SQLException, RestrictionException{
             Abonne ab = this.getAbonne(numAbo);
             IDocument d = this.getDocument(numDocument);
-            d.reservation(ab);
-            super.dbConnect.reserverDocumentBD(ab, d);
+            synchronized (d) {
+                if(d.reservePar() == null && d.empruntePar() == null) {
+                    d.reservation(ab);
+                    super.dbConnect.reserverDocumentBD(ab, d);
+                } else if (d.reservePar() != null) {
+                    throw new RestrictionException("Le document est déjà réservé.");
+                } else if (d.empruntePar() != null) {
+                    throw new RestrictionException("Le document est déjà emprunté.");
+                }
+            }
+
     }
 
 
