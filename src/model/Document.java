@@ -69,7 +69,6 @@ public abstract class Document implements IDocument {
         } else {
             throw new RestrictionException("Vous n'avez pas l'age requis pour emprunter ce document.");
         }
-
     }
 
 
@@ -83,8 +82,6 @@ public abstract class Document implements IDocument {
         } else {
             throw new RestrictionException("Vous n'avez pas l'âge requis pour emprunter ce document.");
         }
-
-
     }
 
 
@@ -103,7 +100,6 @@ public abstract class Document implements IDocument {
 
         return "Document [idDocument=" + idDocument + ", titre=" + titre + ", état=" + etatString + ", abonné=" + abonneString + ", date de réservation=" + dateReservation + "]";
     }
-
 
     public Abonne getAbonne() {
         return this.abonne;

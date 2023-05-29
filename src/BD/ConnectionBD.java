@@ -129,12 +129,18 @@ public class ConnectionBD {
             //on supprime la reservation
             Statement req5 = this.conn.createStatement();
             int rsDelete = req5.executeUpdate("DELETE FROM RESERVATION WHERE idDocument = " + idDocument);
-
             System.out.println("Emprunt effectué");
         }
         else {
             System.out.println("Ce document est réservé par un autre abonné");
         }
+    }
+
+    public void annulerReservation(IDocument document) throws SQLException {
+        int idDocument = document.numero();
+        Statement req6 = this.conn.createStatement();
+        int rsDelete = req6.executeUpdate("DELETE FROM RESERVATION WHERE idDocument = " + idDocument );
+        System.out.println("Réservation annulée pour le document " + idDocument);
     }
 
     private GregorianCalendar getCurrentGregorianCalendar(){

@@ -12,7 +12,7 @@ public class Client {
     public static void main(String[] args) {
         try {
             // Créer un socket pour se connecter au serveur EmpruntServeur
-            Socket socket = new Socket("localhost", 1003);
+            Socket socket = new Socket("localhost", 1001);
 
             // Créer un scanner pour lire les entrées utilisateur
             Scanner scanner = new Scanner(System.in);

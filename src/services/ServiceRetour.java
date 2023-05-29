@@ -16,24 +16,18 @@ import java.util.ArrayList;
 
 public class ServiceRetour extends ServiceCommun {
 
-
     public ServiceRetour(Socket s) {
         super(s);
     }
 
-
     @Override
     public void run() {
-
         try {
-
             BufferedReader sIn = new BufferedReader(new InputStreamReader(s.getInputStream()));
             PrintWriter sOut = new PrintWriter(s.getOutputStream(), true);
 
             sOut.println("Veuillez saisir le numéro du document à retourner.");
             int numDocumentChoisi = Integer.parseInt(sIn.readLine());
-
-            System.out.println("test");
 
             try {
                 this.retournerDocument(getDocument(numDocumentChoisi));
@@ -42,12 +36,9 @@ public class ServiceRetour extends ServiceCommun {
              catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-
-
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     public void retournerDocument(IDocument document) throws SQLException {
@@ -55,6 +46,5 @@ public class ServiceRetour extends ServiceCommun {
             document.retour();
             super.dbConnect.retournerDocument(document);
         }
-
     }
 }

@@ -18,7 +18,6 @@ import java.sql.SQLException;
 
 public class ServiceEmprunt extends ServiceCommun {
 
-
     public ServiceEmprunt(Socket s) {
         super(s);
     }
@@ -36,7 +35,6 @@ public class ServiceEmprunt extends ServiceCommun {
                  sOut.println(Encode.encoder("Votre numéro abonné n'est pas reconnu. Veuillez réessayer."));
                  numAbo = Integer.parseInt(sIn.readLine());
              }
-
             sOut.println(Encode.encoder("Veuillez saisir le numéro d'un document à emprunter. \n" + super.listeDesDocuments()));
             int numDvdChoisi = Integer.parseInt(sIn.readLine());
 
@@ -48,13 +46,11 @@ public class ServiceEmprunt extends ServiceCommun {
             } catch (SQLException e) {
                 sOut.println(Encode.encoder("Erreur SQL."+e.getMessage()));
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         } catch (RestrictionException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     private void emprunterDocument(int numAbo, int numDocument) throws  SQLException, IOException {
