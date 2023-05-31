@@ -16,6 +16,10 @@ import java.util.GregorianCalendar;
 public class ConnectionBD {
     private Connection conn;
 
+    /**
+     * Établit une connexion à la base de données.
+     * @throws ClassNotFoundException si le pilote de base de données n'est pas trouvé.
+     */
     public void connectToBD() throws ClassNotFoundException {
         Class.forName("com.mysql.cj.jdbc.Driver");
         String url = "jdbc:mysql://db4free.net:3306/java_app_serveur?characterEncoding=UTF-8&useSSL=false";
@@ -31,6 +35,12 @@ public class ConnectionBD {
         }
     }
 
+    /**
+     * Récupère la liste des abonnés à partir de la base de données.
+     * @return la liste des abonnés.
+     * @throws SQLException en cas d'erreur SQL lors de la récupération des données.
+     * @throws ParseException si la conversion de la date de naissance échoue.
+     */
     public ArrayList<Abonne> getAbonnesFromDB() throws SQLException, ParseException {
         ArrayList<Abonne> abonnes = new ArrayList<>();
         String requete = "SELECT * from ABONNE";
@@ -38,7 +48,6 @@ public class ConnectionBD {
         ResultSet rs = req1.executeQuery(requete);
         //convertir la date de naissance au format  YYYY-MM-DD en Date
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
 
         while(rs.next()) {
             String dateNaissanceStr = rs.getString(3);
@@ -48,6 +57,12 @@ public class ConnectionBD {
         return abonnes;
     }
 
+    /**
+     * Récupère la liste des documents à partir de la base de données.
+     * @param abonnes la liste des abonnés.
+     * @return la liste des documents.
+     * @throws SQLException en cas d'erreur SQL lors de la récupération des données.
+     */
     public ArrayList<IDocument> getDocumentsFROMDB(ArrayList<Abonne> abonnes) throws SQLException {
         ArrayList<IDocument> documents = new ArrayList<>();
         ArrayList<String> documentsType = new ArrayList<>();
@@ -67,14 +82,14 @@ public class ConnectionBD {
                                 document = new DVD(rs.getInt(1), rs.getString(2), Etat.LIBRE, rs.getBoolean(3));
                                 break;
                         }
-                    break;
+                        break;
 
                     case "EMPRUNTE":
                         switch (type) {
                             case "dvd":
                                 document = new DVD(rs.getInt(1), rs.getString(2), Etat.EMPRUNTE, this.getAbonneById(abonnes,rs.getInt(5)), rs.getBoolean(3));
                         }
-                    break;
+                        break;
 
                     case "RESERVE":
                         Timestamp timestamp = rs.getTimestamp(8);
@@ -94,6 +109,12 @@ public class ConnectionBD {
         return documents;
     }
 
+    /**
+     * Récupère un abonné à partir de sa liste d'abonnés et de son numéro d'adhérent.
+     * @param abonnes la liste des abonnés.
+     * @param numero le numéro d'adhérent de l'abonné recherché.
+     * @return l'abonné correspondant au numéro d'adhérent, ou null si aucun abonné n'est trouvé.
+     */
     private Abonne getAbonneById(ArrayList<Abonne> abonnes, Integer numero) {
         if (numero == null) {
             return null;
@@ -106,6 +127,12 @@ public class ConnectionBD {
         return null;
     }
 
+    /**
+     * Réserve un document pour un abonné dans la base de données.
+     * @param abonne l'abonné qui effectue la réservation.
+     * @param document le document à réserver.
+     * @throws SQLException en cas d'erreur SQL lors de l'insertion des données.
+     */
     public void reserverDocumentBD(Abonne abonne, IDocument document) throws SQLException {
         int idDocument = document.numero();
         Date date = new Date();
@@ -113,11 +140,22 @@ public class ConnectionBD {
         int rsInsert = reqInsert.executeUpdate("INSERT INTO RESERVATION VALUES (" + abonne.getNumeroAdhérent() + ", " + idDocument + ", '" + formatGregorianCalendar(getCurrentGregorianCalendar()) + "')");
     }
 
+    /**
+     * Supprime l'entrée correspondant au retour d'un document dans la base de données.
+     * @param document le document à retourner.
+     * @throws SQLException en cas d'erreur SQL lors de la suppression des données.
+     */
     public void retournerDocument(IDocument document) throws SQLException {
         Statement req3 = this.conn.createStatement();
         int rsDelete = req3.executeUpdate("DELETE FROM EMPRUNT WHERE idDocument = " + document.numero());
     }
 
+    /**
+     * Effectue l'emprunt d'un document par un abonné dans la base de données.
+     * @param document le document à emprunter.
+     * @param abonne l'abonné qui effectue l'emprunt.
+     * @throws SQLException en cas d'erreur SQL lors de l'insertion ou de la suppression des données.
+     */
     public void emprunterDocument(IDocument document, Abonne abonne) throws SQLException {
         int idDocument = document.numero();
         Date date = new Date();
@@ -136,6 +174,11 @@ public class ConnectionBD {
         }
     }
 
+    /**
+     * Annule la réservation d'un document dans la base de données.
+     * @param document le document dont la réservation doit être annulée.
+     * @throws SQLException en cas d'erreur SQL lors de la suppression des données.
+     */
     public void annulerReservation(IDocument document) throws SQLException {
         int idDocument = document.numero();
         Statement req6 = this.conn.createStatement();
@@ -143,6 +186,10 @@ public class ConnectionBD {
         System.out.println("Réservation annulée pour le document " + idDocument);
     }
 
+    /**
+     * Récupère l'objet GregorianCalendar correspondant à la date et l'heure actuelles.
+     * @return l'objet GregorianCalendar.
+     */
     private GregorianCalendar getCurrentGregorianCalendar(){
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         Date date = new Date(timestamp.getTime());
@@ -151,6 +198,11 @@ public class ConnectionBD {
         return calendar;
     }
 
+    /**
+     * Formate un objet GregorianCalendar en une chaîne de caractères au format "yyyy-MM-dd HH:mm:ss".
+     * @param calendar l'objet GregorianCalendar à formater.
+     * @return la chaîne de caractères formatée.
+     */
     private String formatGregorianCalendar(GregorianCalendar calendar) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return dateFormat.format(calendar.getTime());
